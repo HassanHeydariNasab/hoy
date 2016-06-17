@@ -16,7 +16,7 @@ from peewee import *
 import ast
 
 #db = SqliteDatabase('chat.db')
-db = MySQLDatabase('hoy', user='admine8YPWMN',password='Y_nu_3qHr8QH', charset='utf8mb4')
+db = MySQLDatabase('hoy', user='admine8YPWMN',password='Y_nu_3qHr8QH', host=os.environ['OPENSHIFT_MYSQL_DB_HOST'], charset='utf8mb4')
 
 class User(Model):
     user = CharField()
