@@ -4,4 +4,4 @@
 # it could be python, php, ruby, etc.
 
 source $OPENSHIFT_HOMEDIR/python/virtenv/bin/activate
-python $OPENSHIFT_REPO_DIR/bot.py
+python $OPENSHIFT_REPO_DIR/bot.py &
