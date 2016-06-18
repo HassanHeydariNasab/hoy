@@ -15,8 +15,8 @@ from time import sleep
 from peewee import *
 import ast
 
-#db = SqliteDatabase('chat.db')
-db = MySQLDatabase('hoy', user=os.environ['OPENSHIFT_MYSQL_DB_USERNAME'],password=os.environ['OPENSHIFT_MYSQL_DB_PASSWORD'], host=os.environ['OPENSHIFT_MYSQL_DB_HOST'])
+db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'chat.db')
+#db = MySQLDatabase('hoy', user=os.environ['OPENSHIFT_MYSQL_DB_USERNAME'],password=os.environ['OPENSHIFT_MYSQL_DB_PASSWORD'], host=os.environ['OPENSHIFT_MYSQL_DB_HOST'])
 
 class User(Model):
     user = CharField()
@@ -37,8 +37,8 @@ class Chat(Model):
     class Meta:
         database = db
         
-#db.connect()
-#db.create_tables([User, Hoy, Chat])
+db.connect()
+db.create_tables([User, Hoy, Chat])
 
 class Babilo(telepot.helper.ChatHandler):
     def __init__(self, seed_tuple, timeout):
