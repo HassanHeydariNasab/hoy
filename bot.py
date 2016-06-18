@@ -16,7 +16,7 @@ from peewee import *
 import ast
 
 #db = SqliteDatabase('chat.db')
-db = MySQLDatabase('hoy', user='admine8YPWMN',password='Y_nu_3qHr8QH', host=os.environ['OPENSHIFT_MYSQL_DB_HOST'], charset='utf8mb4')
+db = MySQLDatabase('hoy', user=os.environ['OPENSHIFT_MYSQL_DB_USERNAME'],password=os.environ['OPENSHIFT_MYSQL_DB_PASSWORD'], host=os.environ['OPENSHIFT_MYSQL_DB_HOST'])
 
 class User(Model):
     user = CharField()
@@ -37,8 +37,8 @@ class Chat(Model):
     class Meta:
         database = db
         
-db.connect()
-db.create_tables([User, Hoy, Chat])
+#db.connect()
+#db.create_tables([User, Hoy, Chat])
 
 class Babilo(telepot.helper.ChatHandler):
     def __init__(self, seed_tuple, timeout):
