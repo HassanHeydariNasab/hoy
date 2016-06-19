@@ -127,7 +127,7 @@ class Babilo(telepot.helper.ChatHandler):
                 hoy_outputs_new = ast.literal_eval(hoy_outputs_old)
             except:
                 r = u'چنین چیزی وجود ندارد!'
-            del hoy_outputs_new[hoy_outputs_new.index(hoy_output)]
+            del hoy_outputs_new[hoy_outputs_new.index(hoy_output[0])]
             update_query = Hoy.update(hoy=hoy_outputs_new).where(Hoy.id==h_id)
             update_query.execute()
                 
