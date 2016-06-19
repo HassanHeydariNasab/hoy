@@ -112,7 +112,7 @@ class Babilo(telepot.helper.ChatHandler):
                 u.save()
                 r = Chat.create(user=u, hoy=h)
                 r.save()
-        elif '\n' in mr and u'\nنگو\n' in mr:
+        #elif '\n' in mr and u'\nنگو\n' in mr:
             
                 
                 
