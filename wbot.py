@@ -112,9 +112,24 @@ class Babilo(telepot.helper.ChatHandler):
                 u.save()
                 r = Chat.create(user=u, hoy=h)
                 r.save()
-        #elif '\n' in mr and u'\nنگو\n' in mr:
-            
-                
+        elif '\n' in mr and u'\nنگو\n' in mr:
+            mrc = mr[4:]
+            mc = mrc.split('\n')
+            say_index = mc.index(u'نگو')
+            user_input = mc[:say_index]
+            hoy_output = mc[say_index+1:]
+            hoy_outputs_new = []
+            try:
+                H = (Hoy.select().join(Chat).join(User).where(User.user==user_input))
+                hoy_outputs_old = H[0].hoy
+                h_id = H[0].id
+                #at first add old to new
+                hoy_outputs_new = ast.literal_eval(hoy_outputs_old)
+            except:
+                r = u'چنین چیزی وجود ندارد!'
+            del hoy_outputs_new[hoy_outputs_new.index(hoy_output)]
+            update_query = Hoy.update(hoy=hoy_outputs_new).where(Hoy.id==h_id)
+            update_query.execute()
                 
                 
                 
@@ -130,7 +145,13 @@ class Babilo(telepot.helper.ChatHandler):
                 r = mr[8:]
             elif m[1] == u'کمک':
                 r = u'• به این شکل حوی را آموزش دهید:\n\
-                \nسلام\nدرود\nبگو\nعلیک سلام\nسلام حاجی\
+\n\
+سلام\n\
+درود\n\
+بگو\n\
+علیک سلام\n\
+سلام حاجی\n\
+\n\
 (دقت کنید که در یک پیام و در خط‌های جدا باشد. اگر در گروه آموزشش می‌دهید، ابتدا در یک خط حوی بنویسید و سپس مثل بالا خطوط را وارد کنید.)\n\
 ! لطفاً در پایان جملهٔ سؤالی از علامت سؤال فارسی (؟) استفاده کنید.'
             elif len(m) == 3:
