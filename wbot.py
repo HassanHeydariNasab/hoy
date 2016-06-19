@@ -15,7 +15,7 @@ from time import sleep
 from peewee import *
 import ast
 
-db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'mchat.db')
+db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'chat.db')
 #db = MySQLDatabase('hoy', user=os.environ['OPENSHIFT_MYSQL_DB_USERNAME'],password=os.environ['OPENSHIFT_MYSQL_DB_PASSWORD'], host=os.environ['OPENSHIFT_MYSQL_DB_HOST'])
 
 class User(Model):
@@ -37,8 +37,8 @@ class Chat(Model):
     class Meta:
         database = db
         
-db.connect()
-db.create_tables([User, Hoy, Chat])
+#db.connect()
+#db.create_tables([User, Hoy, Chat])
 
 class Babilo(telepot.helper.ChatHandler):
     def __init__(self, seed_tuple, timeout):
@@ -74,8 +74,8 @@ class Babilo(telepot.helper.ChatHandler):
                 r = "error!"
             if len(r) > 4000:
                 r = u'too long!'
-        if chat_type == 'private' and mr[:3] != u'هوی':
-            mr = u'هوی ' + mr 
+        if chat_type == 'private' and mr[:3] != u'حوی':
+            mr = u'حوی ' + mr 
             m = mr.split(' ')
         
         #TODO merge same outputs
@@ -112,19 +112,28 @@ class Babilo(telepot.helper.ChatHandler):
                 u.save()
                 r = Chat.create(user=u, hoy=h)
                 r.save()
+        elif '\n' in mr and u'\nنگو\n' in mr:
             
                 
                 
                 
                 
-        elif m[0] == u'هوی':
+        elif m[0] == u'حوی':
+            '''
             if re.search(u'تخم|کیر|کسخل|کون|کون|الاغ|الاق|جنده|گای|پستون|ممه|گوز|شاش|جیش|قبحه|جلق|جق|سگ|گائ|گاتو|گامو|فاک|ساک|کُس|کوس|کوص|کص|سکس|پورن|الکسیس|گاشو', mr) \
             or re.search(u'(^| )رید(.|$)', mr) or u'خرم' in m or u'خری' in m or u'خره' in m or u'گا' in m or u'شق' in m or u'منی' in m:
                 r = choice([u'بی‌ادب :|', u'بی‌تربیت :|', u'بی‌شخصیت :|',u'عفت کلام داشته باش یه ذره :|', u'دهنتو آب بکش :|'])
             #elif m[1] == u'سلام' or m[1] == u'درود':
                 #r = choice([u'سلام', u'علیک سلام'])
-            elif len(m) >= 3 and m[1] == u'بگو':
+            '''
+            if len(m) >= 3 and m[1] == u'بگو':
                 r = mr[8:]
+            elif m[1] == u'کمک':
+                r = u'• به این شکل حوی را آموزش دهید:\
+\nسلام\nدرود\nبگو\nعلیک سلام\nسلام حاجی\
+
+(دقت کنید که در یک پیام و در خط‌های جدا باشد. اگر در گروه آموزشش می‌دهید، ابتدا در یک خط حوی بنویسید و سپس مثل بالا خطوط را وارد کنید.)\n\
+! لطفاً در پایان جملهٔ سؤالی از علامت سؤال فارسی (؟) استفاده کنید.'
             elif len(m) == 3:
                 m2 = m[1]+' '+m[2]
                 if m2 == u'چه خبر؟':
@@ -151,7 +160,7 @@ class Babilo(telepot.helper.ChatHandler):
 
 
 #TOKEN = sys.argv[1]  # get token from command-line
-TOKEN = '198468455:AAGuz1mME3fSsf2hHrSh2zsqVlzf1_XM2rc'
+TOKEN = '238806755:AAH1vINCnTj8Dfka8hl3Qza6ih28xze9PgM'
 bot = telepot.DelegatorBot(TOKEN, [
     (per_chat_id(), create_open(Babilo, timeout=1)),
 ])

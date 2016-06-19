@@ -3,5 +3,8 @@
 # is deployed and started.  This script gets executed directly, so 
 # it could be python, php, ruby, etc.
 
+killall bot.py
+killall wbot.py
 source $OPENSHIFT_HOMEDIR/python/virtenv/bin/activate
 python $OPENSHIFT_REPO_DIR/bot.py &
+python $OPENSHIFT_REPO_DIR/wbot.py &
