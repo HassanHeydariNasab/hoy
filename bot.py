@@ -37,8 +37,8 @@ class Chat(Model):
     class Meta:
         database = db
         
-db.connect()
-db.create_tables([User, Hoy, Chat])
+#db.connect()
+#db.create_tables([User, Hoy, Chat])
 
 class Babilo(telepot.helper.ChatHandler):
     def __init__(self, seed_tuple, timeout):
