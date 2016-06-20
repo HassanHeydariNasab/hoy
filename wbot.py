@@ -130,17 +130,25 @@ class Babilo(telepot.helper.ChatHandler):
             del hoy_outputs_new[hoy_outputs_new.index(hoy_output[0])]
             update_query = Hoy.update(hoy=hoy_outputs_new).where(Hoy.id==h_id)
             update_query.execute()
+        elif '\n' in mr and u'\nنفهم\n':
+            mrc = mr[4:]
+            mc = mrc.split('\n')
+            say_index = mc.index(u'نفهم')
+            user_input = mc[:say_index]
+            try:
+                U = (User.select().join(Chat).where(User.user==user_input))
+                user_input_old = U[0].user
+                u_id = U[0].id
+                dq = DeleteQuery(User).where(User.id==u_id)
+                #at first add old to new
+            except:
+                r = u'چنین چیزی وجود ندارد!'
+            
+            
                 
                 
                 
         elif m[0] == u'حوی':
-            '''
-            if re.search(u'تخم|کیر|کسخل|کون|کون|الاغ|الاق|جنده|گای|پستون|ممه|گوز|شاش|جیش|قبحه|جلق|جق|سگ|گائ|گاتو|گامو|فاک|ساک|کُس|کوس|کوص|کص|سکس|پورن|الکسیس|گاشو', mr) \
-            or re.search(u'(^| )رید(.|$)', mr) or u'خرم' in m or u'خری' in m or u'خره' in m or u'گا' in m or u'شق' in m or u'منی' in m:
-                r = choice([u'بی‌ادب :|', u'بی‌تربیت :|', u'بی‌شخصیت :|',u'عفت کلام داشته باش یه ذره :|', u'دهنتو آب بکش :|'])
-            #elif m[1] == u'سلام' or m[1] == u'درود':
-                #r = choice([u'سلام', u'علیک سلام'])
-            '''
             if len(m) >= 3 and m[1] == u'بگو':
                 r = mr[8:]
             elif m[1] == u'کمک':
