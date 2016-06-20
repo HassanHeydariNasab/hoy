@@ -140,6 +140,7 @@ class Babilo(telepot.helper.ChatHandler):
                 user_input_old = U[0].user
                 u_id = U[0].id
                 dq = DeleteQuery(User).where(User.id==u_id)
+                dq.execute()
                 #at first add old to new
             except:
                 r = u'چنین چیزی وجود ندارد!'
