@@ -16,6 +16,7 @@ from peewee import *
 import ast
 
 db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'chat.db')
+#db = SqliteDatabase('chat.db')
 #db = MySQLDatabase('hoy', user=os.environ['OPENSHIFT_MYSQL_DB_USERNAME'],password=os.environ['OPENSHIFT_MYSQL_DB_PASSWORD'], host=os.environ['OPENSHIFT_MYSQL_DB_HOST'])
 
 class User(Model):
@@ -136,12 +137,9 @@ class Babilo(telepot.helper.ChatHandler):
             say_index = mc.index(u'نفهم')
             user_input = mc[:say_index]
             try:
-                U = (User.select().join(Chat).where(User.user==user_input[0]))
-                user_input_old = U[0].user
-                u_id = U[0].id
-                dq = DeleteQuery(User).where(User.id==u_id)
+                dq = User.delete().where(User.user==user_input[0])
                 dq.execute()
-                #at first add old to new
+                #TODO delete u_id that not exist in User, from Chat
             except:
                 r = u'چنین چیزی وجود ندارد!'
             
@@ -167,6 +165,25 @@ class Babilo(telepot.helper.ChatHandler):
 سلام\n\
 نگو\n\
 چه سلامی؟\n\
+\n\
+• اگر فکر می‌کنید چیزی که وارد می‌کنید، یک‌سری پاسخ نامربوط به دنبال دارد و چیزی که حوی می‌گوید باید در پاسخ به ورودی‌های دیگری گفته شود، به صورت زیر، ورودی نامربوط را از پاسخ‌ها جدا کنید. (بعداً می‌توانید آن را به پاسخ‌های مربوط به خود وصل کنید.):\n\
+\n\
+مثال گپ:\n\
+کاربر: خداحافظ\n\
+حوی: علیک سلام\n\
+\n\
+نحوهٔ جدا کردن خداحافظ از پاسخ‌های مربوط به سلام:\n\
+\n\
+خداحافظ\n\
+نفهم\n\
+\n\
+و در نهایت، مربوط ساختن خداحافظ به پاسخ‌های مربوط:\n\
+\n\
+خداحافظ\n\
+خدانگهدار\n\
+بگو\n\
+به امید دیدار\n\
+از دیدنت خوش‌حال شدم.\n\
 \n\
 (دقت کنید که در یک پیام و در خط‌های جدا باشد. اگر در گروه آموزشش می‌دهید، ابتدا در یک خط حوی بنویسید و سپس مثل بالا خطوط را وارد کنید.)\n\
 ! لطفاً در پایان جملهٔ سؤالی از علامت سؤال فارسی (؟) استفاده کنید.'
