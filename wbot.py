@@ -136,7 +136,7 @@ class Babilo(telepot.helper.ChatHandler):
             say_index = mc.index(u'نفهم')
             user_input = mc[:say_index]
             try:
-                U = (User.select().join(Chat).where(User.user==user_input))
+                U = (User.select().join(Chat).where(User.user==user_input[0]))
                 user_input_old = U[0].user
                 u_id = U[0].id
                 dq = DeleteQuery(User).where(User.id==u_id)
