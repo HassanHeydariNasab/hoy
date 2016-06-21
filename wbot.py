@@ -57,24 +57,6 @@ class Babilo(telepot.helper.ChatHandler):
             r = u'سلام به تو که اسمتو گذاشتی ' + unicode(fn)
         elif m[0] == u'mojose':
             r = msg
-        elif m[0] == u'dimodo' and m[1] == u'source':
-            f = open("bot.py", 'r')
-            self.sender.sendDocument(f)
-        elif m[0] == u'dimodo' and m[1] == u'k':
-            process = subprocess.Popen(['/bin/bash'], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-            process.stdin.write('(sleep 5 && ./bot_killer.sh)&\n')
-            sleep(2)
-            process.kill()
-            #print process.stdout.readline()
-        elif m[0] == u'dimodo':
-            process = subprocess.Popen(['/bin/bash'], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,bufsize = 1, universal_newlines = True)
-            process.stdin.write(mr[6:]+';echo nenio!\n')
-            r = process.stdout.readline()
-            process.kill()
-            if r == "":
-                r = "error!"
-            if len(r) > 4000:
-                r = u'too long!'
         if chat_type == 'private' and mr[:3] != u'حوی':
             mr = u'حوی ' + mr 
             m = mr.split(' ')

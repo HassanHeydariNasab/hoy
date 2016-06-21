@@ -52,35 +52,80 @@ class Babilo(telepot.helper.ChatHandler):
         mr = msg['text']
         fn = msg['from']['first_name']
         chat_type = msg['chat']['type']
+        user_id = msg['from']['id']
         r = ''
         if m[0] == u'/start':
             r = u'سلام به تو که اسمتو گذاشتی ' + unicode(fn)
         elif m[0] == u'mojose':
             r = msg
-        elif m[0] == u'dimodo' and m[1] == u'source':
-            f = open("bot.py", 'r')
-            self.sender.sendDocument(f)
-        elif m[0] == u'dimodo' and m[1] == u'k':
-            process = subprocess.Popen(['/bin/bash'], shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-            process.stdin.write('(sleep 5 && ./bot_killer.sh)&\n')
-            sleep(2)
-            process.kill()
-            #print process.stdout.readline()
-        elif m[0] == u'dimodo':
-            process = subprocess.Popen(['/bin/bash'], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,bufsize = 1, universal_newlines = True)
-            process.stdin.write(mr[6:]+';echo nenio!\n')
-            r = process.stdout.readline()
-            process.kill()
-            if r == "":
-                r = "error!"
-            if len(r) > 4000:
-                r = u'too long!'
         if chat_type == 'private' and mr[:3] != u'هوی':
             mr = u'هوی ' + mr 
             m = mr.split(' ')
+            
+        if user_id == 170378225:
+            #global ddd = {index, keyOf dd }
+            global h_id
+            global d
+            #get outputs from db
+            if m[1] == u'g':
+                try:
+                    q = Hoy.select(User, Hoy).join(Chat).join(User).where(Hoy.hoy.contains(': 0, ')).get()
+                    h_id = q.id
+                    d = ast.literal_eval(q.hoy)
+                    r = 'یکی گرفتم!'
+                except:
+                    r = 'چیزی برای تأیید نیست!'
+            elif mr[4] == u'g' and '\n' in mr:
+                mrc = mr[4:]
+                mc = mrc.split('\n')
+                user_input = mc[1]
+                try:
+                    q = Hoy.select(User, Hoy).join(Chat).join(User).where(User.user == user_input).get()
+                    h_id = q.id
+                    d = ast.literal_eval(q.hoy)
+                    r = 'گرفتمش!'
+                except:
+                    r = 'نبود که!'
+            #review items
+            elif m[1] == u'r':
+                o = ''
+                i = 0
+                d_iter = d.iteritems()
+                for (k, v) in (d_iter):
+                    o += str(i)+' : '+k+' : '+str(v)+'\n'
+                    i += 1
+                i = 0
+                d_k = d.keys()
+                dd = {}
+                for k in d_k:
+                    dd[i] = k
+                    i += 1
+                global ddd
+                ddd = dd
+                r = o
+            #commit changes
+            elif m[1] == u'c':
+                d_i = d.items()
+                for k, v in d_i:
+                    if v == 0:
+                        del d[k]
+                Hoy.update(hoy=d).where(Hoy.id == h_id).execute()
+                r = 'تغییرات ذخیره شد!'
+            #change state of an item
+            elif len(m) == 2:
+                try:
+                    i = int(m[1])
+                    if d[ddd[i]] == 0:
+                        d[ddd[i]] = 1
+                    else:
+                        d[ddd[i]] = 0
+                    r = ddd[i] + ' : ' + str(d[ddd[i]])
+                except:
+                    pass
+            
         
         #TODO merge same outputs
-        if '\n' in mr and u'\nبگو\n' in mr:
+        if '\n' in mr and u'\nبگو\n' in mr and r == '':
             mrc = mr[4:]
             mc = mrc.split('\n')
             say_index = mc.index(u'بگو')
@@ -97,7 +142,6 @@ class Babilo(telepot.helper.ChatHandler):
                     del user_inputs[user_inputs.index(user_input)]
                 except:
                     pass
-            print user_inputs
             if hoy_outputs_old == {}:
                 h = Hoy.create(hoy=hoy_outputs)
                 h.save()
@@ -111,7 +155,18 @@ class Babilo(telepot.helper.ChatHandler):
                 u.save()
                 r = Chat.create(user=u, hoy=h)
                 r.save()
-            
+        
+        elif '\n' in mr and u'\nنفهم\n' and r == '':
+            mrc = mr[4:]
+            mc = mrc.split('\n')
+            say_index = mc.index(u'نفهم')
+            user_input = mc[:say_index]
+            try:
+                dq = User.delete().where(User.user==user_input[0])
+                dq.execute()
+                #TODO delete u_id that not exist in User, from Chat
+            except:
+                r = u'چنین چیزی وجود ندارد!'
                 
                 
                 
@@ -159,7 +214,4 @@ TOKEN = '198468455:AAGuz1mME3fSsf2hHrSh2zsqVlzf1_XM2rc'
 bot = telepot.DelegatorBot(TOKEN, [
     (per_chat_id(), create_open(Babilo, timeout=1)),
 ])
-#bot = telepot.async.Bot(TOKEN, )
-#bot.setWebhook('https://bot-ajor.rhcloud.com')
-#bot.notifyOnMessage(run_forever=True)
 bot.message_loop(run_forever=True)
