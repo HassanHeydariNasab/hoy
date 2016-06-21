@@ -41,6 +41,7 @@ class Chat(Model):
 #db.connect()
 #db.create_tables([User, Hoy, Chat])
 
+
 class Babilo(telepot.helper.ChatHandler):
     def __init__(self, seed_tuple, timeout):
         super(Babilo, self).__init__(seed_tuple, timeout)
@@ -66,14 +67,19 @@ class Babilo(telepot.helper.ChatHandler):
             #global ddd = {index, keyOf dd }
             global h_id
             global d
+            global ddd
+            global q2
             #get outputs from db
             if m[1] == u'g':
                 try:
-                    q = Hoy.select(User, Hoy).join(Chat).join(User).where(Hoy.hoy.contains(': 0, ')).get()
+                    q = Hoy.select(User, Hoy).join(Chat).join(User).where(Hoy.hoy.contains(': 0')).get()
                     h_id = q.id
+                    q2 = User.select().join(Chat).join(Hoy).where(Hoy.id==h_id)
                     d = ast.literal_eval(q.hoy)
                     r = 'یکی گرفتم!'
-                except:
+                    print q2[0].user
+                except Exception as e:
+                    print e
                     r = 'چیزی برای تأیید نیست!'
             elif mr[4] == u'g' and '\n' in mr:
                 mrc = mr[4:]
@@ -82,6 +88,7 @@ class Babilo(telepot.helper.ChatHandler):
                 try:
                     q = Hoy.select(User, Hoy).join(Chat).join(User).where(User.user == user_input).get()
                     h_id = q.id
+                    q2 = User.select(Hoy, User).join(Chat).join(Hoy).where(Hoy.id==h_id)
                     d = ast.literal_eval(q.hoy)
                     r = 'گرفتمش!'
                 except:
@@ -100,9 +107,11 @@ class Babilo(telepot.helper.ChatHandler):
                 for k in d_k:
                     dd[i] = k
                     i += 1
-                global ddd
                 ddd = dd
-                r = o
+                inputs = ''
+                for i in q2:
+                    inputs += i.user + '\n'
+                r = inputs+'\n-----------\n'+o 
             #commit changes
             elif m[1] == u'c':
                 d_i = d.items()
@@ -110,6 +119,8 @@ class Babilo(telepot.helper.ChatHandler):
                     if v == 0:
                         del d[k]
                 Hoy.update(hoy=d).where(Hoy.id == h_id).execute()
+                d = {}
+                ddd = {}
                 r = 'تغییرات ذخیره شد!'
             #change state of an item
             elif len(m) == 2:
