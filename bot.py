@@ -77,7 +77,7 @@ class Babilo(telepot.helper.ChatHandler):
                     q2 = User.select().join(Chat).join(Hoy).where(Hoy.id==h_id)
                     d = ast.literal_eval(q.hoy)
                     r = 'یکی گرفتم!'
-                    print q2[0].user
+                    #print q2[0].user
                 except Exception as e:
                     print e
                     r = 'چیزی برای تأیید نیست!'
@@ -121,6 +121,7 @@ class Babilo(telepot.helper.ChatHandler):
                 Hoy.update(hoy=d).where(Hoy.id == h_id).execute()
                 d = {}
                 ddd = {}
+                inputs = ''
                 r = 'تغییرات ذخیره شد!'
             #change state of an item
             elif len(m) == 2:
