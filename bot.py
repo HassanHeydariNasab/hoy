@@ -167,7 +167,7 @@ class Babilo(telepot.helper.ChatHandler):
                 r = Chat.create(user=u, hoy=h)
                 r.save()
         
-        elif '\n' in mr and u'\nنفهم\n' and r == '':
+        elif '\n' in mr and u'\nنفهم\n' in mr and r == '':
             mrc = mr[4:]
             mc = mrc.split('\n')
             say_index = mc.index(u'نفهم')
