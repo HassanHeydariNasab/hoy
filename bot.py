@@ -16,6 +16,7 @@ from peewee import *
 import ast
 
 db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'mchat.db')
+#db = SqliteDatabase('mchat.db')
 #db = MySQLDatabase('hoy', user=os.environ['OPENSHIFT_MYSQL_DB_USERNAME'],password=os.environ['OPENSHIFT_MYSQL_DB_PASSWORD'], host=os.environ['OPENSHIFT_MYSQL_DB_HOST'])
 
 class User(Model):
@@ -85,26 +86,24 @@ class Babilo(telepot.helper.ChatHandler):
             say_index = mc.index(u'بگو')
             user_inputs = mc[:say_index]
             hoy_outputs = mc[say_index+1:]
-            #add outputs > old to new
-            hoy_outputs_new = []
+            hoy_outputs = {k:0 for k in hoy_outputs}
+            hoy_outputs_old = {}
             for user_input in user_inputs:
                 try:
                     H = (Hoy.select().join(Chat).join(User).where(User.user==user_input))
                     hoy_outputs_old = H[0].hoy
                     h_id = H[0].id
-                    #at first add old to new
-                    hoy_outputs_new = ast.literal_eval(hoy_outputs_old)
-                    del user_input
+                    hoy_outputs_old = ast.literal_eval(hoy_outputs_old)
+                    del user_inputs[user_inputs.index(user_input)]
                 except:
                     pass
-            if hoy_outputs_new == []:
+            print user_inputs
+            if hoy_outputs_old == {}:
                 h = Hoy.create(hoy=hoy_outputs)
                 h.save()
             else:
-                for hoy_output in hoy_outputs:
-                    if hoy_output not in hoy_outputs_new:
-                        hoy_outputs_new.append(hoy_output)
-                update_query = Hoy.update(hoy=hoy_outputs_new).where(Hoy.id==h_id)
+                hoy_outputs.update(hoy_outputs_old)
+                update_query = Hoy.update(hoy=hoy_outputs).where(Hoy.id==h_id)
                 update_query.execute()
                 h = Hoy.get(Hoy.id==h_id)
             for user_input in user_inputs:
@@ -142,8 +141,13 @@ class Babilo(telepot.helper.ChatHandler):
             
             if r == '':
                 try:
-                    hoy_output = (Hoy.select().join(Chat).join(User).where(User.user==mr[4:]))[0].hoy
-                    r = choice(ast.literal_eval(hoy_output))
+                    ho = (Hoy.select().join(Chat).join(User).where(User.user==mr[4:]))[0].hoy
+                    ho = ast.literal_eval(ho)
+                    outputs = []
+                    for key in ho.keys():
+                        if ho[key]==1:
+                            outputs.append(key)
+                    r = choice(outputs)
                 except:
                     r = u'نمی‌فهمم چی می‌گی.'
                     
