@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 
-import sys
+#import sys
 import os
 import telepot
 from telepot.delegate import per_chat_id, create_open
@@ -76,10 +76,25 @@ class Babilo(telepot.helper.ChatHandler):
                     h_id = q.id
                     q2 = User.select().join(Chat).join(Hoy).where(Hoy.id==h_id)
                     d = ast.literal_eval(q.hoy)
-                    r = 'یکی گرفتم!'
-                    #print q2[0].user
-                except Exception as e:
-                    print e
+                    o = ''
+                    i = 0
+                    d_iter = d.iteritems()
+                    for (k, v) in (d_iter):
+                        o += str(i)+' : '+k+' : '+str(v)+'\n'
+                        i += 1
+                    i = 0
+                    d_k = d.keys()
+                    dd = {}
+                    for k in d_k:
+                        dd[i] = k
+                        i += 1
+                    ddd = dd
+                    inputs = ''
+                    for i in q2:
+                        inputs += i.user + '\n'
+                    r = inputs+'\n-----------\n'+o
+                    
+                except:
                     r = 'چیزی برای تأیید نیست!'
             elif mr[4] == u'g' and '\n' in mr:
                 mrc = mr[4:]
@@ -90,7 +105,23 @@ class Babilo(telepot.helper.ChatHandler):
                     h_id = q.id
                     q2 = User.select(Hoy, User).join(Chat).join(Hoy).where(Hoy.id==h_id)
                     d = ast.literal_eval(q.hoy)
-                    r = 'گرفتمش!'
+                    o = ''
+                    i = 0
+                    d_iter = d.iteritems()
+                    for (k, v) in (d_iter):
+                        o += str(i)+' : '+k+' : '+str(v)+'\n'
+                        i += 1
+                    i = 0
+                    d_k = d.keys()
+                    dd = {}
+                    for k in d_k:
+                        dd[i] = k
+                        i += 1
+                    ddd = dd
+                    inputs = ''
+                    for i in q2:
+                        inputs += i.user + '\n'
+                    r = inputs+'\n-----------\n'+o
                 except:
                     r = 'نبود که!'
             #review items
@@ -156,19 +187,25 @@ class Babilo(telepot.helper.ChatHandler):
                     pass
             if hoy_outputs_old == {}:
                 h = Hoy.create(hoy=hoy_outputs)
-                h.save()
+                r = u'پاسخ‌های شما در صف بررسی قرار گرفت. تا ارباب چی بگن!'
             else:
-                hoy_outputs.update(hoy_outputs_old)
-                update_query = Hoy.update(hoy=hoy_outputs).where(Hoy.id==h_id)
-                update_query.execute()
-                h = Hoy.get(Hoy.id==h_id)
-            for user_input in user_inputs:
-                u = User.create(user=user_input)
-                u.save()
-                r = Chat.create(user=u, hoy=h)
-                r.save()
+                try:
+                    hoy_outputs.update(hoy_outputs_old)
+                    update_query = Hoy.update(hoy=hoy_outputs).where(Hoy.id==h_id)
+                    update_query.execute()
+                    h = Hoy.get(Hoy.id==h_id)
+                    r = u'پاسخ‌های شما نیز در صف بررسی قرار گرفت. تا ارباب چی بگن!'
+                except Exception as e:
+                    print e
+            try:
+                for user_input in user_inputs:
+                    u, created = User.get_or_create(user=user_input)
+                    if created:
+                        rel = Chat.create(user=u, hoy=h)
+            except Exception as e:
+                print e
         
-        elif '\n' in mr and u'\nنفهم\n' in mr and r == '':
+        elif '\n' in mr and u'\nنفهم' in mr and r == '':
             mrc = mr[4:]
             mc = mrc.split('\n')
             say_index = mc.index(u'نفهم')
@@ -176,6 +213,7 @@ class Babilo(telepot.helper.ChatHandler):
             try:
                 dq = User.delete().where(User.user==user_input[0])
                 dq.execute()
+                r = u'اطاعت! دیگر به چنین چیزی پاسخ نمی‌دهم.'
                 #TODO delete u_id that not exist in User, from Chat
             except:
                 r = u'چنین چیزی وجود ندارد!'

@@ -7,4 +7,3 @@ killall python
 source $OPENSHIFT_HOMEDIR/python/virtenv/bin/activate
 python $OPENSHIFT_REPO_DIR/dimodo.py &
 python $OPENSHIFT_REPO_DIR/bot.py &
-python $OPENSHIFT_REPO_DIR/wbot.py &
