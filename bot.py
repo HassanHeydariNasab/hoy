@@ -165,6 +165,8 @@ class Babilo(telepot.helper.ChatHandler):
                     r = ddd[i] + ' : ' + str(d[ddd[i]])
                 except:
                     pass
+            #if m[1] == 'grupoj':
+                
             
         
         #TODO merge same outputs
@@ -222,7 +224,7 @@ class Babilo(telepot.helper.ChatHandler):
                 
                 
         elif m[0] == u'هوی':
-            if re.search(u'تخم|کیر|کسخل|کون|کون|الاغ|الاق|جنده|گای|پستون|ممه|گوز|شاش|جیش|قبحه|جلق|جق|سگ|گائ|گاتو|گامو|فاک|ساک|کُس|کوس|کوص|کص|سکس|پورن|الکسیس|گاشو', mr) \
+            if re.search(u'تخم|کیر|کسخل|کون|کون|الاغ|الاق|جنده|گای|پستون|ممه|گوز|شاش|جیش|قبحه|جلق|جق|سگ|گائ|گاتو|کیون|گامو|فاک|ساک|کُس|کوس|کوص|کص|سکس|پورن|الکسیس|گاشو', mr) \
             or re.search(u'(^| )رید(.|$)', mr) or u'خرم' in m or u'خری' in m or u'خره' in m or u'گا' in m or u'شق' in m or u'منی' in m:
                 r = choice([u'بی‌ادب :|', u'بی‌تربیت :|', u'بی‌شخصیت :|',u'عفت کلام داشته باش یه ذره :|', u'دهنتو آب بکش :|'])
             #elif m[1] == u'سلام' or m[1] == u'درود':
@@ -254,7 +256,14 @@ class Babilo(telepot.helper.ChatHandler):
                             outputs.append(key)
                     r = choice(outputs)
                 except:
-                    r = u'نمی‌فهمم چی می‌گی.'
+                    if re.search(u'؟$', mr):
+                        r = choice([u'چرا از من می‌پرسی؟', u'مگه من استاد همه‌چی‌دونم؟', u'این چه پرسشی است؟', u'چیزی پرسیدی که بلد نیستم پاسخ بدم.', u'همه چی باید از من بپرسی؟', u'من نمی‌دونم.'])
+                    elif re.search(u'!$', mr):
+                        r = choice([u'عجب!', u'چه جالب!'])
+                    elif re.search(u'\.$', mr):
+                        r = choice([u'این که پایان جمله‌ت نقطه گذاشتی خیلی عالیه! ولی معنی جمله‌ت رو نمی‌فهمم. یادم بده.'])
+                    else:
+                        r = u'نمی‌فهمم چی می‌گی.'
                     
         self.sender.sendMessage(r,parse_mode='HTML')
 
