@@ -1,5 +1,6 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
+#from __future__ import unicode_literals
 
 #import sys
 import os
@@ -8,12 +9,14 @@ from telepot.delegate import per_chat_id, create_open
 import re
 from random import choice
 import BeautifulSoup
-#from hazm import *
 import urllib2
 import subprocess
 from time import sleep
 from peewee import *
 import ast
+from playhouse.sqlite_ext import *
+from fuzzywuzzy import fuzz
+from hazm import *
 
 db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'mchat.db')
 #db = SqliteDatabase('mchat.db')
@@ -34,10 +37,12 @@ class Hoy(Model):
 class Chat(Model):
     user = ForeignKeyField(User)
     hoy = ForeignKeyField(Hoy)
-    
+
     class Meta:
         database = db
+
         
+
 #db.connect()
 #db.create_tables([User, Hoy, Chat])
 
@@ -47,6 +52,7 @@ class Babilo(telepot.helper.ChatHandler):
         super(Babilo, self).__init__(seed_tuple, timeout)
         
     def on_chat_message(self, msg):
+        normalizer = Normalizer()
         #if msg.has_key(u'document'):
             #self.sender.downloadFile(msg[u'document'][u'file_id'], file_path="~/dl")
         m = msg['text'].split(' ')
@@ -171,7 +177,7 @@ class Babilo(telepot.helper.ChatHandler):
         
         #TODO merge same outputs
         if '\n' in mr and u'\nبگو\n' in mr and r == '':
-            mrc = mr[4:]
+            mrc = normalizer.normalize(mr[4:])
             mc = mrc.split('\n')
             say_index = mc.index(u'بگو')
             user_inputs = mc[:say_index]
@@ -224,7 +230,7 @@ class Babilo(telepot.helper.ChatHandler):
                 
                 
         elif m[0] == u'هوی':
-            if re.search(u'تخم|کیر|کسخل|کون|کون|الاغ|الاق|جنده|گای|پستون|ممه|گوز|شاش|جیش|قبحه|جلق|جق|سگ|گائ|گاتو|کیون|گامو|فاک|ساک|کُس|کوس|کوص|کص|سکس|پورن|الکسیس|گاشو', mr) \
+            if re.search(u'تخم|کیر|کسخل|کون|کون|الاغ|الاق|جنده|گای|پستون|ممه|گوز|شاش|جیش|قبحه|جلق|جق|سگ|جاکش|گائ|گاتو|کیون|لاشی|گامو|فاک|ساک|کُس|کوس|کوص|کص|سکس|پورن|الکسیس|گاشو', mr) \
             or re.search(u'(^| )رید(.|$)', mr) or u'خرم' in m or u'خری' in m or u'خره' in m or u'گا' in m or u'شق' in m or u'منی' in m:
                 r = choice([u'بی‌ادب :|', u'بی‌تربیت :|', u'بی‌شخصیت :|',u'عفت کلام داشته باش یه ذره :|', u'دهنتو آب بکش :|'])
             #elif m[1] == u'سلام' or m[1] == u'درود':
@@ -247,30 +253,61 @@ class Babilo(telepot.helper.ChatHandler):
                          unicode(all_title[4]).replace('<title', '<a href="%s"'%get_link(2), 2).replace('</title>', '</a>')
             
             if r == '':
+                mrr = mr[4:].replace(u'؟', u'').replace(u'.', u'').replace(u'!', u'')
+                mrr = normalizer.normalize(mrr)
+                mm = mrr.split(' ')
+                rgx = ''
+                for w in mm:
+                    rgx += w+'|'
+                    if u'می' == w[:2] and u'‌' != w[2] and u' ' != w[2]:
+                        rgx += u'می‌'+w[2:]+'|'
+                if len(mm) < 3:
+                    rgx = '(' + rgx[:-1] + ') '
+                else:
+                    rgx = '(' + rgx[:-1] + ')? '
+                rgx = rgx * len(mm)
+                rgx = rgx[:-1]
+                print "regex: " + rgx
                 try:
-                    ho = (Hoy.select().join(Chat).join(User).where(User.user==mr[4:]))[0].hoy
-                    ho = ast.literal_eval(ho)
-                    outputs = []
-                    for key in ho.keys():
-                        if ho[key]==1:
-                            outputs.append(key)
-                    r = choice(outputs)
-                except:
+                    q = Chat.select(Chat, Hoy, User).join(User).switch(Chat).join(Hoy).where(User.user.regexp(rgx))
+                    if len(q) == 0:
+                        #try to fuzzy string and rematch
+                        print 'not found!'
+    
+                    else:
+                        us = q[0].user.user
+                        ho = q[0].hoy.hoy
+                        print 'string founded: ' + us
+                        ho = ast.literal_eval(ho)
+                        ratio = fuzz.ratio(us, mr[4:])
+                        print ratio
+                        if ratio < 75:
+                            raise
+                        outputs = []
+                        for key in ho.keys():
+                            if ho[key]==1:
+                                outputs.append(key)
+                        r = normalizer.normalize(choice(outputs))
+                        w = r.split(' ')
+                        if u'می' == w[-1][:2] and u'‌' != w[-1][2] and u' ' != w[-1][2]:
+                            w[-1] = u'می‌'+w[-1][2:]
+                        r = ' '.join(w)
+                    if r == '':
+                        raise
+                except Exception as e:
                     if re.search(u'؟$', mr):
-                        r = choice([u'چرا از من می‌پرسی؟', u'مگه من استاد همه‌چی‌دونم؟', u'این چه پرسشی است؟', u'چیزی پرسیدی که بلد نیستم پاسخ بدم.', u'همه چی باید از من بپرسی؟', u'من نمی‌دونم.'])
+                        r = choice([u'چرا از من می‌پرسی؟', u'نپرس!'])
                     elif re.search(u'!$', mr):
                         r = choice([u'عجب!', u'چه جالب!'])
                     elif re.search(u'\.$', mr):
                         r = choice([u'این که پایان جمله‌ت نقطه گذاشتی خیلی عالیه! ولی معنی جمله‌ت رو نمی‌فهمم. یادم بده.'])
-                    else:
+                    else:   
                         r = u'نمی‌فهمم چی می‌گی.'
                     
         self.sender.sendMessage(r,parse_mode='HTML')
 
+if __name__ == "__main__":
+    TOKEN = '198468455:AAGuz1mME3fSsf2hHrSh2zsqVlzf1_XM2rc'
+    bot = telepot.DelegatorBot(TOKEN, [(per_chat_id(), create_open(Babilo, timeout=1)),])
+    bot.message_loop(run_forever=True)
 
-#TOKEN = sys.argv[1]  # get token from command-line
-TOKEN = '198468455:AAGuz1mME3fSsf2hHrSh2zsqVlzf1_XM2rc'
-bot = telepot.DelegatorBot(TOKEN, [
-    (per_chat_id(), create_open(Babilo, timeout=1)),
-])
-bot.message_loop(run_forever=True)

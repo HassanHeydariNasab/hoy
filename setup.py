@@ -6,5 +6,5 @@ setup(name='YourAppName',
       author='Your Name',
       author_email='example@example.com',
       url='http://www.python.org/sigs/distutils-sig/',
-      install_requires=['peewee','telepot', 'BeautifulSoup', 'fuzzywuzzy'],
+      install_requires=['peewee','telepot', 'BeautifulSoup', 'fuzzywuzzy', 'python-Levenshtein', 'hazm'],
      )
