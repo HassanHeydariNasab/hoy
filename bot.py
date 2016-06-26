@@ -299,16 +299,18 @@ class Babilo(telepot.helper.ChatHandler):
                             except:
                                 continue
                             n += 1
-                        
-                        outputs = []
-                        for key in ho.keys():
-                            if ho[key]==1:
-                                outputs.append(key)
-                        r = normalizer.normalize(choice(outputs))
-                        w = r.split(' ')
-                        if u'می' == w[-1][:2] and u'‌' != w[-1][2] and u' ' != w[-1][2]:
+                        try:
+                            outputs = []
+                            for key in ho.keys():
+                                if ho[key]==1:
+                                    outputs.append(key)
+                            r = normalizer.normalize(choice(outputs))
+                            w = r.split(' ')
+                            if u'می' == w[-1][:2] and u'‌' != w[-1][2] and u' ' != w[-1][2]:
                             w[-1] = u'می‌'+w[-1][2:]
-                        r = ' '.join(w)
+                            r = ' '.join(w)
+                        except:
+                            raise
                     if r == '':
                         raise
                 except Exception as e:
