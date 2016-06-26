@@ -304,6 +304,7 @@ class Babilo(telepot.helper.ChatHandler):
                         r = choice([u'این که پایان جمله‌ت نقطه گذاشتی خیلی عالیه! ولی معنی جمله‌ت رو نمی‌فهمم. یادم بده.'])
                     else:   
                         r = u'نمی‌فهمم چی می‌گی.'
+                    print 'eeee:', e
                     
         self.sender.sendMessage(r,parse_mode='HTML')
 
