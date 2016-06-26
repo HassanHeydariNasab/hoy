@@ -1,7 +1,11 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-#import sys
+import sys
+
+reload(sys)  
+sys.setdefaultencoding('utf8')
+
 import os
 import telepot
 from telepot.delegate import per_chat_id, create_open
