@@ -293,6 +293,7 @@ class Babilo(telepot.helper.ChatHandler):
                             print 'string founded: ', us
                             ratio = fuzz.ratio(us, mrr)
                             print ratio
+                            print 'hoy: ', ho
                             n += 1
                         ho = ast.literal_eval(ho)
                         outputs = []
