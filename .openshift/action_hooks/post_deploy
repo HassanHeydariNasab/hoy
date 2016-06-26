@@ -2,7 +2,7 @@
 # This is a simple post deploy hook executed after your application 
 # is deployed and started.  This script gets executed directly, so 
 # it could be python, php, ruby, etc.
-
+killall python
 source $OPENSHIFT_HOMEDIR/python/virtenv/bin/activate
 python $OPENSHIFT_REPO_DIR/dimodo.py &
 python $OPENSHIFT_REPO_DIR/bot.py &
