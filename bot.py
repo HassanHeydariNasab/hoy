@@ -1,6 +1,5 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
-#from __future__ import unicode_literals
 
 #import sys
 import os
@@ -256,18 +255,18 @@ class Babilo(telepot.helper.ChatHandler):
                 mrr = mr[4:].replace(u'؟', u'').replace(u'.', u'').replace(u'!', u'')
                 mrr = normalizer.normalize(mrr)
                 mm = mrr.split(' ')
-                rgx = ''
+                rgx = u''
                 for w in mm:
                     rgx += w+'|'
                     if u'می' == w[:2] and u'‌' != w[2] and u' ' != w[2]:
-                        rgx += u'می‌'+w[2:]+'|'
+                        rgx += u'می‌'+w[2:]+u'|'
                 if len(mm) < 3:
-                    rgx = '(' + rgx[:-1] + ') '
+                    rgx = u'(' + rgx[:-1] + u') '
                 else:
-                    rgx = '(' + rgx[:-1] + ')? '
+                    rgx = u'(' + rgx[:-1] + u')? '
                 rgx = rgx * len(mm)
                 rgx = rgx[:-1]
-                print "regex: " + rgx
+                print u"regex: ", rgx
                 try:
                     q = Chat.select(Chat, Hoy, User).join(User).switch(Chat).join(Hoy).where(User.user.regexp(rgx))
                     if len(q) == 0:
@@ -277,7 +276,7 @@ class Babilo(telepot.helper.ChatHandler):
                     else:
                         us = q[0].user.user
                         ho = q[0].hoy.hoy
-                        print 'string founded: ' + us
+                        print 'string founded: ', us
                         ho = ast.literal_eval(ho)
                         ratio = fuzz.ratio(us, mrr)
                         print ratio
