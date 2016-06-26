@@ -256,8 +256,9 @@ class Babilo(telepot.helper.ChatHandler):
                          unicode(all_title[4]).replace('<title', '<a href="%s"'%get_link(2), 2).replace('</title>', '</a>')
             
             if r == '':
-                mrr = mr[4:].replace(u'؟', u'').replace(u'.', u'').replace(u'!', u'')
+                mrr = mr[4:].replace(u'؟', u'').replace(u'.', u'').replace(u'!', u'').replace(u'می ', u'می').replace(u'می‌', u'می')
                 mrr = normalizer.normalize(mrr)
+                print mrr
                 mm = mrr.split(' ')
                 rgx = u''
                 for w in mm:
@@ -271,7 +272,7 @@ class Babilo(telepot.helper.ChatHandler):
                 rgx = rgx * len(mm)
                 rgx = rgx[:-1]
                 regex = unicode(rgx)
-                #print u"regex: ", rgx
+                print u"regex: ", rgx
                 #print rgx
                 try:
                     q = Chat.select(Chat, Hoy, User).join(User).switch(Chat).join(Hoy).where(User.user.regexp(rgx))
