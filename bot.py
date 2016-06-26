@@ -21,8 +21,8 @@ import ast
 from fuzzywuzzy import fuzz
 from hazm import *
 
-db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'mchat.db')
-#db = SqliteDatabase('mchat.db')
+#db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'mchat.db')
+db = SqliteDatabase('mchat.db')
 #db = MySQLDatabase('hoy', user=os.environ['OPENSHIFT_MYSQL_DB_USERNAME'],password=os.environ['OPENSHIFT_MYSQL_DB_PASSWORD'], host=os.environ['OPENSHIFT_MYSQL_DB_HOST'])
 
 class User(Model):
@@ -283,25 +283,40 @@ class Babilo(telepot.helper.ChatHandler):
                         raise
     
                     else:
+                        '''
                         us = q[0].user.user
                         hoo = q[0].hoy.hoy
-                        ho = ast.literal_eval(hoo)
+                        try:
+                            ho = ast.literal_eval(hoo)
+                        except:
+                            pass
                         print 'string founded: ', us
                         ratio = fuzz.ratio(us, mrr)
                         print ratio
                         print 'hoy: ', hoo
+                        
+                        '''
                         n = 0
-                        while ratio < 50 and n < 10:
+                        rd = {}
+                        while n < len(q):
                             us = q[n].user.user
                             print 'string founded: ', us
                             ratio = fuzz.ratio(us, mrr)
                             print ratio
-                            try:
-                                hoo = q[n].hoy.hoy
-                                ho = ast.literal_eval(hoo)
-                            except:
-                                pass
+                            if ratio > 50:
+                                rd[ratio] = n
                             n += 1
+                        print rd
+                        ho = ''
+                        while len(ho) == 0:
+                            n = rd[max(rd.keys())]
+                            hoo = q[n].hoy.hoy
+                            try:
+                                ho = ast.literal_eval(hoo)
+                                print 'ast.', ho
+                            except:
+                                del rd[n]
+                                print 'ast!'
                         try:
                             outputs = []
                             for key in ho.keys():
