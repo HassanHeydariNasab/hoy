@@ -286,6 +286,7 @@ class Babilo(telepot.helper.ChatHandler):
                         print 'string founded: ', us
                         ratio = fuzz.ratio(us, mrr)
                         print ratio
+                        print 'hoy: ', ho
                         n = 0
                         while ratio < 50 and n < 10 and len(ho) < 1:
                             us = q[0].user.user
@@ -295,7 +296,10 @@ class Babilo(telepot.helper.ChatHandler):
                             print ratio
                             print 'hoy: ', ho
                             n += 1
+                            
+                        print 'before', ho
                         ho = ast.literal_eval(ho)
+                        print 'after', ho
                         outputs = []
                         for key in ho.keys():
                             if ho[key]==1:
