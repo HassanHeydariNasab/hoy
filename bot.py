@@ -18,8 +18,8 @@ from playhouse.sqlite_ext import *
 from fuzzywuzzy import fuzz
 from hazm import *
 
-db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'mchat.db')
-#db = SqliteDatabase('mchat.db')
+#db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'mchat.db')
+db = SqliteDatabase('mchat.db')
 #db = MySQLDatabase('hoy', user=os.environ['OPENSHIFT_MYSQL_DB_USERNAME'],password=os.environ['OPENSHIFT_MYSQL_DB_PASSWORD'], host=os.environ['OPENSHIFT_MYSQL_DB_HOST'])
 
 class User(Model):
@@ -279,9 +279,9 @@ class Babilo(telepot.helper.ChatHandler):
                         ho = q[0].hoy.hoy
                         print 'string founded: ' + us
                         ho = ast.literal_eval(ho)
-                        ratio = fuzz.ratio(us, mr[4:])
+                        ratio = fuzz.ratio(us, mrr)
                         print ratio
-                        if ratio < 75:
+                        if ratio < 50:
                             raise
                         outputs = []
                         for key in ho.keys():
