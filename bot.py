@@ -21,8 +21,8 @@ import ast
 from fuzzywuzzy import fuzz
 from hazm import *
 
-db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'mchat.db')
-#db = SqliteDatabase('mchat.db')
+#db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'mchat.db')
+db = SqliteDatabase('mchat.db')
 #db = MySQLDatabase('hoy', user=os.environ['OPENSHIFT_MYSQL_DB_USERNAME'],password=os.environ['OPENSHIFT_MYSQL_DB_PASSWORD'], host=os.environ['OPENSHIFT_MYSQL_DB_HOST'])
 
 class User(Model):
@@ -275,29 +275,32 @@ class Babilo(telepot.helper.ChatHandler):
                 print u"regex: ", rgx
                 #print rgx
                 try:
-                    q = Chat.select(Chat, Hoy, User).join(User).switch(Chat).join(Hoy).where(User.user.regexp(rgx))
+                    q = Chat.select(Chat, Hoy, User).join(User).switch(Chat).join(Hoy).where(User.user.regexp(rgx)).limit(10)
+                    print len(q)
                     if len(q) == 0:
                         #try to fuzzy string and rematch
                         print 'not found!'
+                        raise
     
                     else:
                         us = q[0].user.user
                         hoo = q[0].hoy.hoy
+                        ho = ast.literal_eval(hoo)
                         print 'string founded: ', us
                         ratio = fuzz.ratio(us, mrr)
                         print ratio
-                        print 'hoy: ', ho
+                        print 'hoy: ', hoo
                         n = 0
-                        while ratio < 50 and n < 10 and len(ho) < 1:
+                        while ratio < 50 and n < 10:
                             us = q[n].user.user
-                            hoo = q[n].hoy.hoy
                             print 'string founded: ', us
                             ratio = fuzz.ratio(us, mrr)
                             print ratio
                             try:
+                                hoo = q[n].hoy.hoy
                                 ho = ast.literal_eval(hoo)
                             except:
-                                continue
+                                pass
                             n += 1
                         try:
                             outputs = []
@@ -307,10 +310,10 @@ class Babilo(telepot.helper.ChatHandler):
                             r = normalizer.normalize(choice(outputs))
                             w = r.split(' ')
                             if u'می' == w[-1][:2] and u'‌' != w[-1][2] and u' ' != w[-1][2]:
-                            w[-1] = u'می‌'+w[-1][2:]
+                                w[-1] = u'می‌'+w[-1][2:]
                             r = ' '.join(w)
                         except:
-                            raise
+                            r = ''
                     if r == '':
                         raise
                 except Exception as e:
@@ -321,8 +324,8 @@ class Babilo(telepot.helper.ChatHandler):
                     elif re.search(u'\.$', mr):
                         r = choice([u'این که پایان جمله‌ت نقطه گذاشتی خیلی عالیه! ولی معنی جمله‌ت رو نمی‌فهمم. یادم بده.'])
                     else:   
-                        r = u'نمی‌فهمم چی می‌گی. یادم بده!'
-                    print 'eeee:', e
+                        r = u'نمی‌فهمم چی می‌گی. بیا خصوصی یادم بده!'
+                    print 'erorr:', e
                     
         self.sender.sendMessage(r,parse_mode='HTML')
 
