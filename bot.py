@@ -282,7 +282,7 @@ class Babilo(telepot.helper.ChatHandler):
     
                     else:
                         us = q[0].user.user
-                        ho = q[0].hoy.hoy
+                        hoo = q[0].hoy.hoy
                         print 'string founded: ', us
                         ratio = fuzz.ratio(us, mrr)
                         print ratio
@@ -290,12 +290,12 @@ class Babilo(telepot.helper.ChatHandler):
                         n = 0
                         while ratio < 50 and n < 10 and len(ho) < 1:
                             us = q[n].user.user
-                            ho = q[n].hoy.hoy
+                            hoo = q[n].hoy.hoy
                             print 'string founded: ', us
                             ratio = fuzz.ratio(us, mrr)
                             print ratio
                             try:
-                                ho = ast.literal_eval(ho)
+                                ho = ast.literal_eval(hoo)
                             except:
                                 continue
                             n += 1
