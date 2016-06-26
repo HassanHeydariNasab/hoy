@@ -21,8 +21,10 @@ import ast
 from fuzzywuzzy import fuzz
 from hazm import *
 
-#db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'mchat.db')
-db = SqliteDatabase('mchat.db')
+if 'OPENSHIFT_DATA_DIR' in os.environ:
+    db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'mchat.db')
+else:
+    db = SqliteDatabase('mchat.db')
 #db = MySQLDatabase('hoy', user=os.environ['OPENSHIFT_MYSQL_DB_USERNAME'],password=os.environ['OPENSHIFT_MYSQL_DB_PASSWORD'], host=os.environ['OPENSHIFT_MYSQL_DB_HOST'])
 
 class User(Model):
