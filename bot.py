@@ -287,7 +287,7 @@ class Babilo(telepot.helper.ChatHandler):
                         ratio = fuzz.ratio(us, mrr)
                         print ratio
                         n = 0
-                        while ratio < 50 and n < 10:
+                        while ratio < 50 and n < 10 and len(ho) < 1:
                             us = q[0].user.user
                             ho = q[0].hoy.hoy
                             print 'string founded: ', us
@@ -314,7 +314,7 @@ class Babilo(telepot.helper.ChatHandler):
                     elif re.search(u'\.$', mr):
                         r = choice([u'این که پایان جمله‌ت نقطه گذاشتی خیلی عالیه! ولی معنی جمله‌ت رو نمی‌فهمم. یادم بده.'])
                     else:   
-                        r = u'نمی‌فهمم چی می‌گی.'
+                        r = u'نمی‌فهمم چی می‌گی. یادم بده!'
                     print 'eeee:', e
                     
         self.sender.sendMessage(r,parse_mode='HTML')
