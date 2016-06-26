@@ -336,6 +336,7 @@ class Babilo(telepot.helper.ChatHandler):
                 except Exception as e:
                     if re.search(u'؟$', mr):
                         r = choice([u'چرا از من می‌پرسی؟', u'نپرس!'])
+                        r = e
                     elif re.search(u'!$', mr):
                         r = choice([u'عجب!', u'چه جالب!'])
                     elif re.search(u'\.$', mr):
@@ -343,6 +344,7 @@ class Babilo(telepot.helper.ChatHandler):
                     else:   
                         r = u'نمی‌فهمم چی می‌گی. بیا خصوصی یادم بده!'
                     print 'erorr:', e
+                    r = e
                     
         self.sender.sendMessage(r,parse_mode='HTML')
 
