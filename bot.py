@@ -266,7 +266,7 @@ class Babilo(telepot.helper.ChatHandler):
                     rgx = u'(' + rgx[:-1] + u')? '
                 rgx = rgx * len(mm)
                 rgx = rgx[:-1]
-                print u"regex: ", rgx
+                #print u"regex: ", rgx
                 try:
                     q = Chat.select(Chat, Hoy, User).join(User).switch(Chat).join(Hoy).where(User.user.regexp(rgx))
                     if len(q) == 0:
