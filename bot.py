@@ -285,19 +285,6 @@ class Babilo(telepot.helper.ChatHandler):
                         raise
     
                     else:
-                        '''
-                        us = q[0].user.user
-                        hoo = q[0].hoy.hoy
-                        try:
-                            ho = ast.literal_eval(hoo)
-                        except:
-                            pass
-                        print 'string founded: ', us
-                        ratio = fuzz.ratio(us, mrr)
-                        print ratio
-                        print 'hoy: ', hoo
-                        
-                        '''
                         n = 0
                         rd = {}
                         while n < len(q):
@@ -334,7 +321,9 @@ class Babilo(telepot.helper.ChatHandler):
                     if r == '':
                         raise
                 except Exception as e:
-                    if re.search(u'؟$', mr):
+                    if re.search(u'(نظرت|نظر تو) (در مورد|درباره|دربارهٔ|درباره ی|درباره‌ی|راجع به|راجب) .* (چیست|چیه)', mr):
+                        r = choice([u'در مورد همه چی باید نظر بدم؟!', u'نظر خاصی ندارم.', u'در این زمینه صاحب نظر نیستم.'])
+                    elif re.search(u'؟$', mr):
                         r = choice([u'چرا از من می‌پرسی؟', u'نپرس!'])
                     elif re.search(u'!$', mr):
                         r = choice([u'عجب!', u'چه جالب!'])
