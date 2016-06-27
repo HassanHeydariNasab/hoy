@@ -6,3 +6,4 @@ killall python &> /dev/null
 source $OPENSHIFT_HOMEDIR/python/virtenv/bin/activate
 python $OPENSHIFT_REPO_DIR/dimodo.py &
 python $OPENSHIFT_REPO_DIR/bot.py &
+echo 'done!'
