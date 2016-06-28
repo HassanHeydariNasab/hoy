@@ -343,8 +343,9 @@ class Babilo(telepot.helper.ChatHandler):
         self.sender.sendMessage(r,parse_mode='HTML')
 
 if __name__ == "__main__":
-    if sys.argv[1] == 'd':
-        TOKEN = '185401678:AAF_7PbchYOIDAKpy6lJqX7z01IsFgDTksA'
+    if len(sys.argv) == 2:
+        if sys.argv[1] == 'd':
+            TOKEN = '185401678:AAF_7PbchYOIDAKpy6lJqX7z01IsFgDTksA'
     else:
         TOKEN = '198468455:AAGuz1mME3fSsf2hHrSh2zsqVlzf1_XM2rc'
     bot = telepot.DelegatorBot(TOKEN, [(per_chat_id(), create_open(Babilo, timeout=1)),])
