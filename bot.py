@@ -218,7 +218,7 @@ class Babilo(telepot.helper.ChatHandler):
             except Exception as e:
                 print e
         
-        elif '\n' in mr and u'\nنفهم' in mr and r == '':
+        elif '\n' in mr and u'\nنفهم' in mr and r == '' and user_id == 170378225:
             mrc = mr[4:]
             mc = mrc.split('\n')
             say_index = mc.index(u'نفهم')
@@ -241,7 +241,7 @@ class Babilo(telepot.helper.ChatHandler):
             #elif m[1] == u'سلام' or m[1] == u'درود':
                 #r = choice([u'سلام', u'علیک سلام'])
             elif len(m) >= 3 and m[1] == u'بگو':
-                r = mr[8:]
+                r = normalizer.normalize(mr[8:])
             elif len(m) == 3:
                 m2 = m[1]+' '+m[2]
                 if m2 == u'چه خبر؟':
@@ -256,6 +256,49 @@ class Babilo(telepot.helper.ChatHandler):
                     r = unicode(all_title[2]).replace('<title>', '<a href="%s">'%get_link(0), 2).replace('</title>', '</a>') + '\n\n' + \
                             unicode(all_title[3]).replace('<title', '<a href="%s"'%get_link(1), 2).replace('</title>', '</a>') + '\n\n' + \
                          unicode(all_title[4]).replace('<title', '<a href="%s"'%get_link(2), 2).replace('</title>', '</a>')
+            elif len(m) == 2:
+                if m[1] == u'راهنما':
+                    r = u'• به این شکل هوی را آموزش دهید:\n\
+\n\
+سلام\n\
+درود\n\
+بگو\n\
+علیک سلام\n\
+سلام حاجی\n\
+\n\
+!> دقت کنید که در یک پیام و در خط‌های جدا باشد.\n\
+\n\
+!> اگر در گروه آموزشش می‌دهید، ابتدا هوی بنویسید و سپس مثل بالا خطوط را وارد کنید. این دو شکل قابل قبول است:\n\
+\n\
+هوی سلام\n\
+درود\n\
+بگو\n\
+علیک سلام\n\
+سلام حاجی\n\
+---------\n\
+هوی\n\
+سلام\n\
+درود\n\
+بگو\n\
+علیک سلام\n\
+سلام حاجی\n\
+\n\
+• آموخته‌ها پس از تأیید به نمایش در می‌آیند.\n\
+\n\
+!> آموخته‌هایی که به اشخاص مربوط است و جنبهٔ عمومی ندارد، تأیید نمی‌شود.\n\
+!> آموخته‌های شامل حرف بد، توهین و… تأیید نمی‌شود.\n\
+!> آموخته‌های دارای اشتباه نوشتاری تأیید نمی‌شود.\n\
+\n\
+• اگر مثلاً «سلام» برای هوی تعریف شده باشد، می‌تواند این‌گونه از پاسخ‌های «سلام» برای «هلو» هم استفاده کند:\n\
+\n\
+سلام\n\
+هلو\n\
+بگو\n\
+علیک\n\
+های\n\
+سلام عزیز\n\
+\n\
+• اگر پیشنهادی دارید، به @HSN6789 پیام بدهید.'
             
             if r == '':
                 mrr = mr[4:].replace(u'؟', u'').replace(u'.', u'').replace(u'!', u'').replace(u'می ', u'می').replace(u'می‌', u'می')
