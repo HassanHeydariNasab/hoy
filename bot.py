@@ -335,7 +335,8 @@ class Babilo(telepot.helper.ChatHandler):
                             print 'string founded: ', us
                             ratio = fuzz.ratio(us, mrr)
                             print ratio
-                            rd[n] = ratio
+                            if ratio >= 40:
+                                rd[n] = ratio
                             n += 1
                         print rd
                         ho = ''
@@ -373,7 +374,7 @@ class Babilo(telepot.helper.ChatHandler):
                     if re.search(u'(نظرت|نظر تو) (در مورد|درباره|دربارهٔ|درباره ی|درباره‌ی|راجع به|راجب) .* (چیست|چیه)', mr):
                         r = choice([u'در مورد همه چی باید نظر بدم؟!', u'نظر خاصی ندارم.', u'در این زمینه صاحب نظر نیستم.'])
                     elif re.search(u'؟$', mr):
-                        r = choice([u'چرا از من می‌پرسی؟', u'نپرس!'])
+                        r = choice([u'چرا می‌پرسی؟', u'نپرس!', u'نمی‌دونم.'])
                     elif re.search(u'!$', mr):
                         r = choice([u'عجب!', u'چه جالب!'])
                     elif re.search(u'\.$', mr):
