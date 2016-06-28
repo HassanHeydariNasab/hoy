@@ -209,14 +209,14 @@ class Babilo(telepot.helper.ChatHandler):
                     h = Hoy.get(Hoy.id==h_id)
                     r = u'پاسخ‌های شما نیز در صف بررسی قرار گرفت. تا ارباب چی بگن!'
                 except Exception as e:
-                    print e
+                    #print e
             try:
                 for user_input in user_inputs:
                     u, created = User.get_or_create(user=user_input)
                     if created:
                         rel = Chat.create(user=u, hoy=h)
             except Exception as e:
-                print e
+                #print e
         
         elif '\n' in mr and u'\nنفهم' in mr and r == '' and user_id == 170378225:
             mrc = mr[4:]
@@ -303,7 +303,7 @@ class Babilo(telepot.helper.ChatHandler):
             if r == '':
                 mrr = mr[4:].replace(u'؟', u'').replace(u'.', u'').replace(u'!', u'').replace(u'می ', u'می').replace(u'می‌', u'می')
                 mrr = normalizer.normalize(mrr)
-                print 'normalized user input:', mrr
+                #print 'normalized user input:', mrr
                 mm = mrr.split(' ')
                 rgx = u''
                 for w in mm:
@@ -317,13 +317,13 @@ class Babilo(telepot.helper.ChatHandler):
                 rgx = rgx * len(mm)
                 rgx = rgx[:-1]
                 regex = unicode(rgx)
-                print 'regex:', rgx
+                #print 'regex:', rgx
                 try:
                     q = Chat.select(Chat, Hoy, User).join(User).switch(Chat).join(Hoy).where(User.user.regexp(rgx)).limit(10)
-                    print 'records founded (max 10):', len(q)
+                    #print 'records founded (max 10):', len(q)
                     if len(q) == 0:
                         #try to fuzzy string and rematch
-                        print 'not found!'
+                        #print 'not found!'
                         raise
     
                     else:
@@ -332,29 +332,29 @@ class Babilo(telepot.helper.ChatHandler):
                         rd = {}
                         while n < len(q):
                             us = q[n].user.user
-                            print 'string founded: ', us
+                            #print 'string founded: ', us
                             ratio = fuzz.ratio(us, mrr)
-                            print ratio
+                            #print ratio
                             if ratio >= 40:
                                 rd[n] = ratio
                             n += 1
-                        print rd
+                        #print rd
                         ho = ''
                         while len(ho) == 0:
                             maxn = max(rd.values())
                             n = rd.keys()[rd.values().index(maxn)]
                             hoo = q[n].hoy.hoy
-                            print 'founded a dict for', n
+                            #print 'founded a dict for', n
                             try:
                                 ho = ast.literal_eval(hoo)
-                                print 'a valid dict:', ho
+                                #print 'a valid dict:', ho
                                 if 1 not in ho.values():
-                                    print 'this dict haven\'t any valid item'
+                                    #print 'this dict haven\'t any valid item'
                                     raise
                             except:
-                                print 'deleting', rd[n]
+                                #print 'deleting', rd[n]
                                 del rd[n]
-                                print 'deleted!'
+                                #print 'deleted!'
                                 ho = ''
                         try:
                             outputs = []
@@ -381,7 +381,7 @@ class Babilo(telepot.helper.ChatHandler):
                         r = choice([u'این که پایان جمله‌ت نقطه گذاشتی خیلی عالیه! ولی معنی جمله‌ت رو نمی‌فهمم. یادم بده.'])
                     else:   
                         r = u'نمی‌فهمم چی می‌گی. بیا خصوصی یادم بده!'
-                    print 'erorr:', e
+                    #print 'erorr:', e
                     #r = e
                     
         self.sender.sendMessage(r,parse_mode='HTML')
