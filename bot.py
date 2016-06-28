@@ -209,6 +209,7 @@ class Babilo(telepot.helper.ChatHandler):
                     h = Hoy.get(Hoy.id==h_id)
                     r = u'پاسخ‌های شما نیز در صف بررسی قرار گرفت. تا ارباب چی بگن!'
                 except Exception as e:
+                    pass
                     #print e
             try:
                 for user_input in user_inputs:
@@ -216,6 +217,7 @@ class Babilo(telepot.helper.ChatHandler):
                     if created:
                         rel = Chat.create(user=u, hoy=h)
             except Exception as e:
+                pass
                 #print e
         
         elif '\n' in mr and u'\nنفهم' in mr and r == '' and user_id == 170378225:
