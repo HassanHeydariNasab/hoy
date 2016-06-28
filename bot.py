@@ -236,7 +236,7 @@ class Babilo(telepot.helper.ChatHandler):
                 
         elif m[0] == u'هوی':
             if re.search(u'تخم|کیر|کسخل|کون|کون|الاغ|الاق|جنده|گای|پستون|ممه|گوز|شاش|جیش|قبحه|جلق|جق|سگ|جاکش|گائ|گاتو|کیون|لاشی|گامو|فاک|ساک|کُس|کوس|کوص|کص|سکس|پورن|الکسیس|گاشو', mr) \
-            or re.search(u'(^| )رید(.|$)', mr) or u'خرم' in m or u'خری' in m or u'خره' in m or u'گا' in m or u'شق' in m or u'منی' in m:
+            or re.search(u'(^| )رید(.|$)', mr) or u'خرم' in m or u'خری' in m or u'خره' in m or u'گا' in m or u'شق' in m or u'منی' in m or re.search(u'(^| )حشری(.|$)', mr):
                 r = choice([u'بی‌ادب :|', u'بی‌تربیت :|', u'بی‌شخصیت :|',u'عفت کلام داشته باش یه ذره :|', u'دهنتو آب بکش :|'])
             #elif m[1] == u'سلام' or m[1] == u'درود':
                 #r = choice([u'سلام', u'علیک سلام'])
@@ -260,7 +260,7 @@ class Babilo(telepot.helper.ChatHandler):
             if r == '':
                 mrr = mr[4:].replace(u'؟', u'').replace(u'.', u'').replace(u'!', u'').replace(u'می ', u'می').replace(u'می‌', u'می')
                 mrr = normalizer.normalize(mrr)
-                print mrr
+                print 'normalized user input:', mrr
                 mm = mrr.split(' ')
                 rgx = u''
                 for w in mm:
@@ -274,11 +274,10 @@ class Babilo(telepot.helper.ChatHandler):
                 rgx = rgx * len(mm)
                 rgx = rgx[:-1]
                 regex = unicode(rgx)
-                print u"regex: ", rgx
-                print rgx
+                print 'regex:', rgx
                 try:
                     q = Chat.select(Chat, Hoy, User).join(User).switch(Chat).join(Hoy).where(User.user.regexp(rgx)).limit(10)
-                    print len(q)
+                    print 'records founded (max 10):', len(q)
                     if len(q) == 0:
                         #try to fuzzy string and rematch
                         print 'not found!'
@@ -286,28 +285,33 @@ class Babilo(telepot.helper.ChatHandler):
     
                     else:
                         n = 0
+                        #rd = {n: ratio}
                         rd = {}
                         while n < len(q):
                             us = q[n].user.user
                             print 'string founded: ', us
                             ratio = fuzz.ratio(us, mrr)
                             print ratio
-                            if ratio > 50:
-                                rd[ratio] = n
+                            rd[n] = ratio
                             n += 1
                         print rd
                         ho = ''
                         while len(ho) == 0:
-                            n = rd[max(rd.keys())]
+                            maxn = max(rd.values())
+                            n = rd.keys()[rd.values().index(maxn)]
                             hoo = q[n].hoy.hoy
+                            print 'founded a dict for', n
                             try:
                                 ho = ast.literal_eval(hoo)
-                                print 'ast.', ho
+                                print 'a valid dict:', ho
                                 if 1 not in ho.values():
+                                    print 'this dict haven\'t any valid item'
                                     raise
                             except:
+                                print 'deleting', rd[n]
                                 del rd[n]
-                                print 'ast!'
+                                print 'deleted!'
+                                ho = ''
                         try:
                             outputs = []
                             for key in ho.keys():
@@ -339,7 +343,10 @@ class Babilo(telepot.helper.ChatHandler):
         self.sender.sendMessage(r,parse_mode='HTML')
 
 if __name__ == "__main__":
-    TOKEN = '198468455:AAGuz1mME3fSsf2hHrSh2zsqVlzf1_XM2rc'
+    if sys.argv[1] == 'd':
+        TOKEN = '185401678:AAF_7PbchYOIDAKpy6lJqX7z01IsFgDTksA'
+    else:
+        TOKEN = '198468455:AAGuz1mME3fSsf2hHrSh2zsqVlzf1_XM2rc'
     bot = telepot.DelegatorBot(TOKEN, [(per_chat_id(), create_open(Babilo, timeout=1)),])
     bot.message_loop(run_forever=True)
 
