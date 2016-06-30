@@ -392,9 +392,7 @@ if __name__ == "__main__":
     else:
         o = open(os.path.join(os.environ['OPENSHIFT_DATA_DIR'], 'token'))
         t = o.read()
-        del t[-1]
-        del t[-2]
-        TOKEN = t
+        TOKEN = t[:-2]
         o.close()
     bot = telepot.DelegatorBot(TOKEN, [(per_chat_id(), create_open(Babilo, timeout=1)),])
     bot.message_loop(run_forever=True)
