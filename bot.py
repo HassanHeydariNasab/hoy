@@ -382,8 +382,8 @@ class Babilo(telepot.helper.ChatHandler):
                         r = u'نمی‌فهمم چی می‌گی. بیا خصوصی یادم بده!'
                     #print 'erorr:', e
                     #r = e
-                    
-        self.sender.sendMessage(r,parse_mode='HTML')
+        if len(r) > 0:            
+            self.sender.sendMessage(r,parse_mode='HTML')
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
