@@ -13,13 +13,11 @@ import re
 from random import choice
 import BeautifulSoup
 import urllib2
-import subprocess
-from time import sleep
 from peewee import *
 import ast
 #from playhouse.sqlite_ext import *
 from fuzzywuzzy import fuzz
-from hazm import *
+from hazm import Normalizer
 
 if 'OPENSHIFT_DATA_DIR' in os.environ:
     db = SqliteDatabase(os.environ['OPENSHIFT_DATA_DIR']+'mchat.db')
@@ -215,7 +213,7 @@ class Babilo(telepot.helper.ChatHandler):
                 for user_input in user_inputs:
                     u, created = User.get_or_create(user=user_input)
                     if created:
-                        rel = Chat.create(user=u, hoy=h)
+                        Chat.create(user=u, hoy=h)
             except Exception as e:
                 pass
                 #print e
@@ -318,7 +316,6 @@ class Babilo(telepot.helper.ChatHandler):
                     rgx = u'(' + rgx[:-1] + u')? '
                 rgx = rgx * len(mm)
                 rgx = rgx[:-1]
-                regex = unicode(rgx)
                 #print 'regex:', rgx
                 try:
                     q = Chat.select(Chat, Hoy, User).join(User).switch(Chat).join(Hoy).where(User.user.regexp(rgx)).limit(10)
