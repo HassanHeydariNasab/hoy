@@ -390,7 +390,7 @@ if __name__ == "__main__":
         if sys.argv[1] == 'd':
             TOKEN = '185401678:AAF_7PbchYOIDAKpy6lJqX7z01IsFgDTksA'
     else:
-        TOKEN = '198468455:AAGuz1mME3fSsf2hHrSh2zsqVlzf1_XM2rc'
+        TOKEN = open(os.path.join(os.environ['OPENSHIFT_DATA_DIR'], 'token')).read()
     bot = telepot.DelegatorBot(TOKEN, [(per_chat_id(), create_open(Babilo, timeout=1)),])
     bot.message_loop(run_forever=True)
 
