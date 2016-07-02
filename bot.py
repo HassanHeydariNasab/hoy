@@ -80,6 +80,7 @@ class Babilo(telepot.helper.ChatHandler):
             global q2
             #get outputs from db
             if m[1] == u'g':
+                #print 'g'
                 try:
                     q = Hoy.select(User, Hoy).join(Chat).join(User).where(Hoy.hoy.contains(': 0')).get()
                     h_id = q.id
@@ -105,7 +106,8 @@ class Babilo(telepot.helper.ChatHandler):
                     
                 except:
                     r = 'چیزی برای تأیید نیست!'
-            elif mr[4] == u'g' and '\n' in mr:
+            elif mr[4:6] == u'g\n':
+                #print 'g2'
                 mrc = mr[4:]
                 mc = mrc.split('\n')
                 user_input = mc[1]
@@ -133,6 +135,92 @@ class Babilo(telepot.helper.ChatHandler):
                     r = inputs+'\n-----------\n'+o
                 except:
                     r = 'نبود که!'
+            elif mr[4:7] == 'gg\n':
+                #print 'gg'
+                mrr = mr[7:].replace(u'؟', u'').replace(u'.', u'').replace(u'!', u'').replace(u'می ', u'می').replace(u'می‌', u'می')
+                mrr = normalizer.normalize(mrr)
+                #print 'normalized user input:', mrr
+                mm = mrr.split(' ')
+                rgx = u''
+                for w in mm:
+                    rgx += w+'|'
+                    if u'می' == w[:2] and u'‌' != w[2] and u' ' != w[2]:
+                        rgx += u'می‌'+w[2:]+u'|'
+                if len(mm) < 3:
+                    rgx = u'(' + rgx[:-1] + u') '
+                else:
+                    rgx = u'(' + rgx[:-1] + u')? '
+                rgx = rgx * len(mm)
+                rgx = rgx[:-1]
+                #print 'regex:', rgx
+                try:
+                    q = Chat.select(Chat, Hoy, User).join(User).switch(Chat).join(Hoy).where(User.user.regexp(rgx)).limit(10)
+                    #print 'records founded (max 10):', len(q)
+                    if len(q) == 0:
+                        #try to fuzzy string and rematch
+                        #print 'not found!'
+                        raise
+    
+                    else:
+                        n = 0
+                        #rd = {n: ratio}
+                        rd = {}
+                        while n < len(q):
+                            us = q[n].user.user
+                            #print 'string founded: ', us
+                            ratio = fuzz.ratio(us, mrr)
+                            #print ratio
+                            if ratio >= 50:
+                                rd[n] = ratio
+                            n += 1
+                        #print rd
+                        ho = ''
+                        while len(ho) == 0:
+                            maxn = max(rd.values())
+                            n = rd.keys()[rd.values().index(maxn)]
+                            hoo = q[n].hoy.hoy
+                            #print 'founded a dict for', n
+                            try:
+                                ho = ast.literal_eval(hoo)
+                                #print 'a valid dict:', ho
+                                user_input = q[n].user.user
+                                if 1 not in ho.values():
+                                    #print 'this dict haven\'t any valid item'
+                                    raise
+                            except:
+                                #print 'deleting', rd[n]
+                                del rd[n]
+                                #print 'deleted!'
+                                ho = ''
+                                user_input = ''
+                except:
+                    #print 'eee!'
+                    pass
+                try:
+                    q = Hoy.select(User, Hoy).join(Chat).join(User).where(User.user == user_input).get()
+                    h_id = q.id
+                    q2 = User.select(Hoy, User).join(Chat).join(Hoy).where(Hoy.id==h_id)
+                    d = ast.literal_eval(q.hoy)
+                    o = ''
+                    i = 0
+                    d_iter = d.iteritems()
+                    for (k, v) in (d_iter):
+                        o += str(i)+' : '+k+' : '+str(v)+'\n'
+                        i += 1
+                    i = 0
+                    d_k = d.keys()
+                    dd = {}
+                    for k in d_k:
+                        dd[i] = k
+                        i += 1
+                    ddd = dd
+                    inputs = ''
+                    for i in q2:
+                        inputs += i.user + '\n'
+                    r = inputs+'\n-----------\n'+o
+                except:
+                    r = 'نبود که!'
+                
             #review items
             elif m[1] == u'r':
                 o = ''
@@ -334,7 +422,7 @@ class Babilo(telepot.helper.ChatHandler):
                             #print 'string founded: ', us
                             ratio = fuzz.ratio(us, mrr)
                             #print ratio
-                            if ratio >= 40:
+                            if ratio >= 50:
                                 rd[n] = ratio
                             n += 1
                         #print rd
